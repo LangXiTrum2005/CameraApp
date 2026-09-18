@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorAccent">#00e5ff</color>
+    <color name="colorPrimary">#0b1020</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="dark_red">#e93659</color>
+    <color name="on_surface">#636771</color>
+    <color name="on_surface_variant">#93a4b7</color>
+    <color name="surface">#0b1220</color>
+    <color name="surface_variant">#0f172a</color>
+</resources>

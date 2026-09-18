@@ -1,0 +1,35 @@
+package com.photolab.vintage.util.adapter
+
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.photolab.vintage.R
+import com.photolab.vintage.util.bean.IntroItem
+
+class IntroAdapter(
+    private val items: List<IntroItem>
+) : RecyclerView.Adapter<IntroAdapter.ViewHolder>() {
+
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val image: ImageView = view.findViewById(R.id.ivImage)
+        val title: TextView = view.findViewById(R.id.tvTitle)
+        val description: TextView = view.findViewById(R.id.tvDescription)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_intro, parent, false)
+        return ViewHolder(view)
+    }
+
+    override fun getItemCount(): Int = items.size
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val item = items[position]
+        holder.image.setImageResource(item.imageResId)
+        holder.title.text = item.title
+        holder.description.text = item.description
+    }
+}

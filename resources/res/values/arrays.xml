@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="com.google.firebase.crashlytics.build_ids_arch">
+        <item>arm</item>
+        <item>arm</item>
+        <item>arm</item>
+        <item>arm</item>
+        <item>x86</item>
+        <item>x86</item>
+        <item>x86</item>
+        <item>x86</item>
+        <item>aarch64</item>
+        <item>aarch64</item>
+        <item>aarch64</item>
+        <item>aarch64</item>
+    </array>
+    <array name="com.google.firebase.crashlytics.build_ids_build_id">
+        <item>f92b4f190e589ca64d0ea5ef8f810fba23c69e3d</item>
+        <item>ca2137e3ee3b75a0feb8cd6968df3406e2041b25</item>
+        <item>e57e839894ecbc6e03a23a7f63c22d99</item>
+        <item>993d166f549fdb50b4a3923be4ab417950923554</item>
+        <item>4ebbf5c8135453e4e476d63db185bdd0da7a349a</item>
+        <item>35a7921f214557f1a75d76bc23a53f162ae9a1aa</item>
+        <item>ae916eff5eb5fcc08347c9db943a35d3</item>
+        <item>220e9e136c01430c498bb7d5a7c4f30225f2d580</item>
+        <item>19a607cf42b03a6f0cd5c2218796ed32c7014222</item>
+        <item>31e2e4ebf1f360ce1d6a1b48716973287a2baa2d</item>
+        <item>0b2abce8c63cd81afa104a99f6d9b0e4</item>
+        <item>8454227f532825370e1f1da7007aa37155918e5d</item>
+    </array>
+    <array name="com.google.firebase.crashlytics.build_ids_lib">
+        <item>libFaceTracker.so</item>
+        <item>libCGE.so</item>
+        <item>libffmpeg.so</item>
+        <item>libCGEExt.so</item>
+        <item>libFaceTracker.so</item>
+        <item>libCGE.so</item>
+        <item>libffmpeg.so</item>
+        <item>libCGEExt.so</item>
+        <item>libFaceTracker.so</item>
+        <item>libCGE.so</item>
+        <item>libffmpeg.so</item>
+        <item>libCGEExt.so</item>
+    </array>
+</resources>

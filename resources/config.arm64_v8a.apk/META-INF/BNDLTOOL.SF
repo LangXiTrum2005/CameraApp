@@ -1,0 +1,23 @@
+Signature-Version: 1.0
+Created-By: 1.0 (Android)
+SHA1-Digest-Manifest: wr40hbs03qWP3DioZSGey9EOaMw=
+X-Android-APK-Signed: 2, 3
+
+Name: AndroidManifest.xml
+SHA1-Digest: fw8azjneZUfY5Ba6Q9auoFMWldk=
+
+Name: lib/arm64-v8a/libCGE.so
+SHA1-Digest: O4f7q/uDKGvAjK/rLl7W17Rcqxo=
+
+Name: lib/arm64-v8a/libCGEExt.so
+SHA1-Digest: AoaWI1L4pdRZLBv73By6vruK/kI=
+
+Name: lib/arm64-v8a/libFaceTracker.so
+SHA1-Digest: bB1sT8LKeIZdjCj6LdxupJbN14Q=
+
+Name: lib/arm64-v8a/libffmpeg.so
+SHA1-Digest: tbzz/g7Euy6+mci06yfwyyNmNgU=
+
+Name: stamp-cert-sha256
+SHA1-Digest: Bs40BvDZ1xrbgQrPTD2x5w/NfHQ=
+

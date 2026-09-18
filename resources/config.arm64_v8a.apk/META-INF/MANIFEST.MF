@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+
+Name: AndroidManifest.xml
+SHA1-Digest: 5NPU38ucbpJROaC1bX1zK6LAVEw=
+
+Name: lib/arm64-v8a/libCGE.so
+SHA1-Digest: pnp59ORoI8vGjxSYNEW7lAFslMM=
+
+Name: lib/arm64-v8a/libCGEExt.so
+SHA1-Digest: 5fefFafdYgJIGMxbiPCj4kjhFU4=
+
+Name: lib/arm64-v8a/libFaceTracker.so
+SHA1-Digest: sarL6pD2y0hiK7c7XkuZGtC541M=
+
+Name: lib/arm64-v8a/libffmpeg.so
+SHA1-Digest: 6i3yJDCVlEVeIkCxl0jUNQD6Noc=
+
+Name: stamp-cert-sha256
+SHA1-Digest: 5vTkm69vqAbusD/fho7oWwc7j+I=
+

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android" android:color="@color/on_surface_variant">
+    <item>
+        <shape android:shape="oval">
+            <size
+                android:height="40dp"
+                android:width="40dp"/>
+            <solid android:color="@color/surface_variant"/>
+        </shape>
+    </item>
+</ripple>

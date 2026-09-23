@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ui_permission_eyebrow">VINTAGE CAMERA · SETUP</string><string name="ui_permission_title">Permissions\nfor the full picture</string><string name="ui_permission_desc">Allow these essentials to capture moments and keep you in the loop.</string><string name="ui_permission_camera_title">Camera access</string><string name="ui_permission_camera_desc">Capture photos and videos.</string><string name="ui_permission_notifications_title">Notifications</string><string name="ui_permission_notifications_desc">Updates, tips, and new features.</string><string name="ui_permission_note">You can change permissions at any time in Settings.</string><string name="ui_grant_access">GRANT ACCESS</string>
+</resources>

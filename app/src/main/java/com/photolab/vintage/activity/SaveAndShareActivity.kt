@@ -10,6 +10,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.FileProvider
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.bumptech.glide.Glide
 import com.photolab.vintage.R
 import com.photolab.vintage.util.AdManager
@@ -23,6 +26,7 @@ class SaveAndShareActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         makeFullScreen()
+        hideSystemUI()
         setContentView(R.layout.save_and_share_layout)
 
         AdManager.getInstance().showInterstitialAd(this)
@@ -36,9 +40,9 @@ class SaveAndShareActivity : BaseActivity() {
             }
             val pathTv = findViewById<TextView>(R.id.path)
             if (pathTv != null) {
-                pathTv.text = "Đã lưu vào $pathStr"
+                pathTv.text = getString(R.string.ui_saved_to, pathStr)
             }
-            Toast.makeText(this, "Đã lưu ảnh thành công vào bộ sưu tập!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.ui_saved_success, Toast.LENGTH_SHORT).show()
         }
 
         findViewById<View>(R.id.back)?.setOnClickListener {
@@ -92,9 +96,9 @@ class SaveAndShareActivity : BaseActivity() {
         }
         if (isPackageInstalled(packageNameApp, this)) {
             intent.setPackage(packageNameApp)
-            startActivity(Intent.createChooser(intent, "Share"))
+            startActivity(Intent.createChooser(intent, getString(R.string.ui_share)))
         } else {
-            Toast.makeText(applicationContext, "Vui lòng cài đặt $appName", Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, getString(R.string.ui_install_app, appName), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -120,7 +124,35 @@ class SaveAndShareActivity : BaseActivity() {
             putExtra(Intent.EXTRA_STREAM, uri)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
-        startActivity(Intent.createChooser(intent, "Share"))
+        startActivity(Intent.createChooser(intent, getString(R.string.ui_share)))
+    }
+
+    private fun hideSystemUI() {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        val controller = WindowInsetsControllerCompat(window, window.decorView)
+        controller.hide(WindowInsetsCompat.Type.navigationBars())
+        controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+
+        @Suppress("DEPRECATION")
+        window.decorView.systemUiVisibility = (
+            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+            or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+            or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+            or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        )
+    }
+
+    override fun onResume() {
+        super.onResume()
+        hideSystemUI()
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            hideSystemUI()
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

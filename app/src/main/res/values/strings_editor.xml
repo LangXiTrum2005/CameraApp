@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ui_edit">Edit</string><string name="ui_save">Save</string><string name="ui_saved">Saved</string><string name="ui_edit_again">Edit again</string><string name="ui_new_photo">New photo</string><string name="ui_more">More</string><string name="ui_date">Date</string><string name="ui_date_off">OFF</string>
+</resources>

@@ -38,7 +38,7 @@
         </provider>
 
         <activity
-            android:name=".activity.IntroActivity"
+            android:name=".activity.LanguageActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
@@ -47,6 +47,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".activity.IntroActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
 
         <activity
             android:name=".activity.PermissionActivity"
@@ -78,11 +84,6 @@
         <activity
             android:name=".activity.SettingsActivity"
             android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".activity.PremiumActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
 
     </application>
 

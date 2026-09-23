@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ui_edit">Chỉnh sửa</string><string name="ui_save">Lưu</string><string name="ui_saved">Đã lưu</string><string name="ui_edit_again">Chỉnh sửa tiếp</string><string name="ui_new_photo">Ảnh mới</string><string name="ui_more">Thêm</string><string name="ui_date">Ngày tháng</string><string name="ui_date_off">TẮT</string>
+</resources>

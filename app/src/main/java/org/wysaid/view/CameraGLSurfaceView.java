@@ -8,6 +8,7 @@ import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
+import java.util.List;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 import org.wysaid.camera.CameraInstance;
@@ -96,15 +97,31 @@ public class CameraGLSurfaceView extends GLSurfaceView implements GLSurfaceView.
             return false;
         }
         try {
-            if (!params.getSupportedFlashModes().contains(str)) {
-                Log.e("libCGE_java", "Invalid Flash Light Mode!!!");
+            List<String> supported = params.getSupportedFlashModes();
+            if (supported == null || supported.isEmpty()) {
+                Log.e("libCGE_java", "Flash modes list is empty or null!");
                 return false;
             }
-            params.setFlashMode(str);
+            String targetMode = str;
+            if ("off".equalsIgnoreCase(str)) {
+                targetMode = Camera.Parameters.FLASH_MODE_OFF;
+            } else if (!supported.contains(targetMode)) {
+                if (supported.contains(Camera.Parameters.FLASH_MODE_TORCH)) {
+                    targetMode = Camera.Parameters.FLASH_MODE_TORCH;
+                } else if (supported.contains(Camera.Parameters.FLASH_MODE_ON)) {
+                    targetMode = Camera.Parameters.FLASH_MODE_ON;
+                } else if (supported.contains(Camera.Parameters.FLASH_MODE_AUTO)) {
+                    targetMode = Camera.Parameters.FLASH_MODE_AUTO;
+                } else {
+                    Log.e("libCGE_java", "No valid flash mode available for " + str);
+                    return false;
+                }
+            }
+            params.setFlashMode(targetMode);
             cameraInstance().setParams(params);
             return true;
-        } catch (Exception unused) {
-            Log.e("libCGE_java", "Switch flash light failed, check if you're using front camera.");
+        } catch (Exception e) {
+            Log.e("libCGE_java", "Switch flash light failed: " + e.getMessage());
             return false;
         }
     }

@@ -1,7 +1,6 @@
 package com.photolab.vintage.util.adapter
 
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
@@ -11,8 +10,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.photolab.vintage.R
-import com.photolab.vintage.activity.PremiumActivity
-import com.photolab.vintage.util.SharePreferenceUtil
 import com.photolab.vintage.util.bean.FilterConfig
 
 class FilterAdapter(
@@ -49,17 +46,9 @@ class FilterAdapter(
             .load(Uri.parse(filter.assetUrl))
             .into(holder.filterImg)
 
-        holder.lockImg?.visibility = if (filter.isPremium && !SharePreferenceUtil.isPurchased(context)) {
-            View.VISIBLE
-        } else {
-            View.GONE
-        }
+        holder.lockImg?.visibility = View.GONE
 
         holder.itemView.setOnClickListener {
-            if (filter.isPremium && !SharePreferenceUtil.isPurchased(context)) {
-                context.startActivity(Intent(context, PremiumActivity::class.java))
-                return@setOnClickListener
-            }
             val prev = selectedFilterIndex
             selectedFilterIndex = holder.bindingAdapterPosition
             notifyItemChanged(prev)

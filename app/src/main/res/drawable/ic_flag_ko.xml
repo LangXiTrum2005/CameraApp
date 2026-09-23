@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <clip-path android:pathData="M24,0A24,24 0,1 0,24,48A24,24 0,1 0,24,0Z"/>
+    <path
+        android:pathData="M24,0 A24,24 0 1,0 24,48 A24,24 0 1,0 24,0 Z"
+        android:fillColor="#FFFFFF"/>
+    <!-- Red top half circle -->
+    <path
+        android:pathData="M24,14 A10,10 0 0,1 24,34 A5,5 0 0,1 24,24 A5,5 0 0,0 24,14 Z"
+        android:fillColor="#C60C30"/>
+    <!-- Blue bottom half circle -->
+    <path
+        android:pathData="M24,34 A10,10 0 0,1 24,14 A5,5 0 0,1 24,24 A5,5 0 0,0 24,34 Z"
+        android:fillColor="#003478"/>
+</vector>

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ui_permission_eyebrow">VINTAGE CAMERA · 设置</string><string name="ui_permission_title">授予权限\n获得完整体验</string><string name="ui_permission_desc">允许这些必要权限，以捕捉瞬间并及时获取更新。</string><string name="ui_permission_camera_title">相机权限</string><string name="ui_permission_camera_desc">拍摄照片和视频。</string><string name="ui_permission_notifications_title">通知</string><string name="ui_permission_notifications_desc">更新、提示和新功能。</string><string name="ui_permission_note">你可以随时在设置中更改权限。</string><string name="ui_grant_access">授予权限</string>
+</resources>

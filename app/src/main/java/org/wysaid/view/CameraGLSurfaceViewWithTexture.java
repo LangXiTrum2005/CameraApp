@@ -308,12 +308,6 @@ public class CameraGLSurfaceViewWithTexture extends CameraGLSurfaceView implemen
                             }
                             canvas2.drawBitmap(bitmapCreateScaledBitmap, matrix3, null);
                         }
-                        str2 = str;
-                        if (str2 != null) {
-                            CGENativeLibrary.filterImage_MultipleEffectsWriteBack(bitmapCreateScaledBitmap, str2, f);
-                        }
-                        takePictureCallback.takePictureOK(bitmapCreateScaledBitmap);
-                        CameraGLSurfaceViewWithTexture.this.cameraInstance().getCameraDevice().startPreview();
                     }
                     if (bitmapCreateBitmap != null) {
                         bitmapCreateScaledBitmap = bitmapCreateBitmap;

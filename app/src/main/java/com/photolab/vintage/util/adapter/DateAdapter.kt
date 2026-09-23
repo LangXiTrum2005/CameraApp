@@ -1,12 +1,14 @@
 package com.photolab.vintage.util.adapter
 
 import android.content.Context
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.card.MaterialCardView
 import com.photolab.vintage.R
 import com.photolab.vintage.util.DateUtil
 import java.util.Date
@@ -41,10 +43,11 @@ class DateAdapter(
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val icon: ImageView = view.findViewById(R.id.icon)
         val name: TextView = view.findViewById(R.id.tool_name)
+        val card: MaterialCardView = view.findViewById(R.id.wrapAdjust)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.adjust_view, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.date_format_item, parent, false)
         return ViewHolder(view)
     }
 
@@ -54,7 +57,7 @@ class DateAdapter(
         val item = dateFormats[position]
 
         val previewText = if (item.formatPattern.isEmpty()) {
-            "OFF"
+            context.getString(R.string.ui_date_off)
         } else {
             DateUtil.getDateFormat(Date(), item.formatPattern)
         }
@@ -64,9 +67,13 @@ class DateAdapter(
         if (selectedIndex == position) {
             holder.icon.setImageResource(R.drawable.ic_calendar_selected)
             holder.name.setTextColor(context.getColor(R.color.primary))
+            holder.card.setCardBackgroundColor(Color.parseColor("#F0E9FF"))
+            holder.card.strokeColor = Color.parseColor("#9C7BE8")
         } else {
             holder.icon.setImageResource(R.drawable.ic_calendar)
             holder.name.setTextColor(context.getColor(R.color.on_surface_light))
+            holder.card.setCardBackgroundColor(Color.parseColor("#80FFFFFF"))
+            holder.card.strokeColor = Color.parseColor("#4D9B91A7")
         }
 
         holder.itemView.setOnClickListener {

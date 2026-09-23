@@ -5,8 +5,10 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.Rect
+import android.media.ExifInterface
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -14,6 +16,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.photolab.vintage.R
@@ -26,6 +32,7 @@ import com.photolab.vintage.util.adapter.EditingToolsAdapter
 import com.photolab.vintage.util.adapter.FilterAdapter
 import com.photolab.vintage.util.bean.FilterConfig
 import com.photolab.vintage.view.ToolType
+import com.photolab.vintage.view.LiquidGlassCarouselEffect
 import com.photolab.vintage.view.VerticalSlider
 import org.wysaid.nativePort.CGENativeLibrary
 import org.wysaid.view.ImageGLSurfaceView
@@ -59,7 +66,7 @@ class EditPhotoActivity : AppCompatActivity(), FilterAdapter.FilterListener, Dat
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.decorView.systemUiVisibility = 1280
+        hideSystemUI()
         setContentView(R.layout.edit_layout)
 
         AdManager.getInstance().loadInterstitialAd(this)
@@ -136,20 +143,79 @@ class EditPhotoActivity : AppCompatActivity(), FilterAdapter.FilterListener, Dat
                     Uri.fromFile(File(uriStr))
                 }
                 val inputStream = contentResolver.openInputStream(uri)
-                currentBitmap = BitmapFactory.decodeStream(inputStream)
+                val decoded = BitmapFactory.decodeStream(inputStream)
+                inputStream?.close()
+
+                if (decoded != null) {
+                    currentBitmap = rotateBitmapIfRequired(decoded, uri, uriStr)
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
-                currentBitmap = BitmapFactory.decodeFile(uriStr)
+                val decoded = BitmapFactory.decodeFile(uriStr)
+                if (decoded != null) {
+                    val uri = Uri.fromFile(File(uriStr))
+                    currentBitmap = rotateBitmapIfRequired(decoded, uri, uriStr)
+                }
             }
         }
 
-        glSurfaceView.setDisplayMode(ImageGLSurfaceView.DisplayMode.DISPLAY_ASPECT_FILL)
+        glSurfaceView.setDisplayMode(ImageGLSurfaceView.DisplayMode.DISPLAY_ASPECT_FIT)
         glSurfaceView.setSurfaceCreatedCallback {
             currentBitmap?.let { bitmap ->
                 glSurfaceView.setImageBitmap(bitmap)
                 applyCurrentConfigs()
             }
         }
+    }
+
+    private fun rotateBitmapIfRequired(bitmap: Bitmap, uri: Uri, uriStr: String): Bitmap {
+        var orientation = ExifInterface.ORIENTATION_UNDEFINED
+        try {
+            contentResolver.openInputStream(uri)?.use { stream ->
+                val exif = ExifInterface(stream)
+                orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        if (orientation == ExifInterface.ORIENTATION_UNDEFINED || orientation == ExifInterface.ORIENTATION_NORMAL) {
+            if (!uriStr.startsWith("content://")) {
+                try {
+                    val filePath = if (uriStr.startsWith("file://")) Uri.parse(uriStr).path else uriStr
+                    if (filePath != null && File(filePath).exists()) {
+                        val exif = ExifInterface(filePath)
+                        orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+
+        val matrix = Matrix()
+        when (orientation) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
+            ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
+            ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
+            ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> matrix.postScale(-1f, 1f)
+            ExifInterface.ORIENTATION_FLIP_VERTICAL -> matrix.postScale(1f, -1f)
+            ExifInterface.ORIENTATION_TRANSPOSE -> {
+                matrix.postRotate(90f)
+                matrix.postScale(-1f, 1f)
+            }
+            ExifInterface.ORIENTATION_TRANSVERSE -> {
+                matrix.postRotate(270f)
+                matrix.postScale(-1f, 1f)
+            }
+            else -> return bitmap
+        }
+
+        val rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+        if (rotatedBitmap != bitmap) {
+            bitmap.recycle()
+        }
+        return rotatedBitmap
     }
 
     private fun setupAdapters() {
@@ -214,27 +280,27 @@ class EditPhotoActivity : AppCompatActivity(), FilterAdapter.FilterListener, Dat
                 ToolType.FILTER -> {
                     rvFilterView.visibility = View.VISIBLE
                     rvFilterView.adapter = filterAdapter
-                    intensiveSlider.visibility = View.VISIBLE
+                    intensiveSlider.visibility = View.GONE
                 }
                 ToolType.DUST -> {
                     rvFilterView.visibility = View.VISIBLE
                     rvFilterView.adapter = dustAdapter
-                    intensiveSlider.visibility = View.VISIBLE
+                    intensiveSlider.visibility = View.GONE
                 }
                 ToolType.LIGHT -> {
                     rvFilterView.visibility = View.VISIBLE
                     rvFilterView.adapter = lightAdapter
-                    intensiveSlider.visibility = View.VISIBLE
+                    intensiveSlider.visibility = View.GONE
                 }
                 ToolType.GRADIENT -> {
                     rvFilterView.visibility = View.VISIBLE
                     rvFilterView.adapter = gradientAdapter
-                    intensiveSlider.visibility = View.VISIBLE
+                    intensiveSlider.visibility = View.GONE
                 }
                 ToolType.MASK -> {
                     rvFilterView.visibility = View.VISIBLE
                     rvFilterView.adapter = maskAdapter
-                    intensiveSlider.visibility = View.VISIBLE
+                    intensiveSlider.visibility = View.GONE
                 }
                 ToolType.NONE -> {
                     rvFilterView.visibility = View.GONE
@@ -248,8 +314,10 @@ class EditPhotoActivity : AppCompatActivity(), FilterAdapter.FilterListener, Dat
             }
         }
 
-        rvTools.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        rvTools.layoutManager = GridLayoutManager(this, toolsAdapter.itemCount)
         rvTools.adapter = toolsAdapter
+
+        LiquidGlassCarouselEffect(minScale = 0.92f, edgeAlpha = 0.72f).attachTo(rvFilterView)
     }
 
     override fun onFilterSelected(filterConfig: FilterConfig) {
@@ -260,7 +328,7 @@ class EditPhotoActivity : AppCompatActivity(), FilterAdapter.FilterListener, Dat
         } else {
             configs[filterConfig.type] = MessageFormat.format(filterConfig.config, filterConfig.intensive)
             intensiveSlider.setProgress(filterConfig.intensive / 100.0f)
-            intensiveSlider.visibility = View.VISIBLE
+            intensiveSlider.visibility = View.GONE
         }
         applyCurrentConfigs()
     }
@@ -309,7 +377,7 @@ class EditPhotoActivity : AppCompatActivity(), FilterAdapter.FilterListener, Dat
                 startActivity(intent)
                 finish()
             } else {
-                Toast.makeText(this, "Lưu ảnh thất bại!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.ui_save_failed, Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -334,9 +402,33 @@ class EditPhotoActivity : AppCompatActivity(), FilterAdapter.FilterListener, Dat
         return resultBitmap
     }
 
+    private fun hideSystemUI() {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        val controller = WindowInsetsControllerCompat(window, window.decorView)
+        controller.hide(WindowInsetsCompat.Type.navigationBars())
+        controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+
+        @Suppress("DEPRECATION")
+        window.decorView.systemUiVisibility = (
+            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+            or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+            or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+            or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        )
+    }
+
     override fun onResume() {
         super.onResume()
+        hideSystemUI()
         glSurfaceView.onResume()
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            hideSystemUI()
+        }
     }
 
     override fun onPause() {

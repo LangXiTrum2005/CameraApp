@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ui_mode_none">清除</string>
+    <string name="ui_mode_original">原始</string>
+    <string name="ui_mode_filter">滤镜</string>
+    <string name="ui_mode_dust">胶片灰尘</string>
+    <string name="ui_mode_light">光线</string>
+    <string name="ui_mode_mask">蒙版</string>
+    <string name="ui_mode_gradient">渐变</string>
+</resources>

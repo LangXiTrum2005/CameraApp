@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ui_language">Language</string>
+    <string name="ui_camera_section">Camera</string>
+    <string name="ui_keep_original">Keep original photo</string>
+    <string name="ui_keep_original_subtitle">Save an extra copy beside the edited photo</string>
+    <string name="ui_default_grid">Show grid by default</string>
+    <string name="ui_default_grid_subtitle">Show the rule-of-thirds grid when opening the camera</string>
+    <string name="ui_mirror_front_camera">Mirror front camera</string>
+    <string name="ui_mirror_front_camera_subtitle">Selfies match the preview</string>
+    <string name="ui_version">Version 1.0</string>
+    <string name="ui_confirm">Confirm</string>
+    <string name="ui_flag">Flag</string>
+    <string name="ui_next">NEXT</string>
+    <string name="ui_get_started">GET STARTED</string>
+    <string name="ui_skip">Skip</string>
+    <string name="ui_capture_moments">Capture Moments</string>
+    <string name="ui_capture_moments_desc">Turn back time with a classic film camera.</string>
+    <string name="ui_film_look">Authentic Film Look</string>
+    <string name="ui_film_look_desc">Real-time color filters featuring realistic film grain and natural light leaks.</string>
+    <string name="ui_share_story">Share Your Story</string>
+    <string name="ui_share_story_desc">Save high-quality photos and instantly share your story.</string>
+    <string name="ui_effect_count">%1$d effects</string>
+    <string name="ui_capture_failed">Photo capture failed</string>
+    <string name="ui_camera_error">Camera error: %1$s</string>
+    <string name="ui_timer">Timer: %1$ds</string>
+    <string name="ui_timer_off">Timer Off</string>
+    <string name="ui_save_failed">Could not save photo</string>
+    <string name="ui_saved_to">Saved to %1$s</string>
+    <string name="ui_saved_success">Photo saved to gallery</string>
+    <string name="ui_install_app">Please install %1$s</string>
+    <string name="ui_share">Share</string>
+    <string name="ui_camera_permission_required">Camera permission is required to take photos.</string>
+</resources>

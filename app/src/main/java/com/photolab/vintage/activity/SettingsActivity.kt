@@ -16,6 +16,8 @@ import com.photolab.vintage.util.SharePreferenceUtil
 
 class SettingsActivity : AppCompatActivity() {
 
+    private var appliedLanguageCode: String = ""
+
     private lateinit var cardLanguage: MaterialCardView
     private lateinit var tvLanguageSubtitle: TextView
     private lateinit var switchGrid: SwitchMaterial
@@ -41,9 +43,12 @@ class SettingsActivity : AppCompatActivity() {
         switchMirrorFrontCamera = findViewById(R.id.switch_mirror_front_camera)
 
         tvLanguageSubtitle.text = LanguageUtil.getCurrentLanguageName(this)
+        appliedLanguageCode = SharePreferenceUtil.getAppLanguage(this)
 
         cardLanguage.setOnClickListener {
-            showLanguageDialog()
+            val intent = Intent(this, LanguageActivity::class.java)
+            intent.putExtra("from_settings", true)
+            startActivity(intent)
         }
 
         switchGrid.isChecked = SharePreferenceUtil.isGridEnabled(this)
@@ -62,22 +67,16 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
-    private fun showLanguageDialog() {
-        val languages = LanguageUtil.LANGUAGE_LIST
-        val names = languages.map { it.displayName }.toTypedArray()
-        val currentCode = SharePreferenceUtil.getAppLanguage(this)
-        val selectedIndex = languages.indexOfFirst { it.code.equals(currentCode, ignoreCase = true) }.let { if (it >= 0) it else 0 }
-
-        MaterialAlertDialogBuilder(this)
-            .setTitle("Ngôn ngữ / Language")
-            .setSingleChoiceItems(names, selectedIndex) { dialog, which ->
-                val selectedLang = languages[which]
-                LanguageUtil.applyLanguage(this, selectedLang.code)
-                dialog.dismiss()
+    override fun onResume() {
+        super.onResume()
+        if (::tvLanguageSubtitle.isInitialized) {
+            val selectedLanguage = SharePreferenceUtil.getAppLanguage(this)
+            if (appliedLanguageCode.isNotEmpty() && selectedLanguage != appliedLanguageCode) {
                 recreate()
+                return
             }
-            .setNegativeButton(android.R.string.cancel, null)
-            .show()
+            tvLanguageSubtitle.text = LanguageUtil.getCurrentLanguageName(this)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

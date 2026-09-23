@@ -54,9 +54,9 @@ class IntroActivity : AppCompatActivity() {
                 super.onPageSelected(position)
                 setCurrentIndicator(position)
                 if (position == introAdapter.itemCount - 1) {
-                    btnNext.text = "GET STARTED"
+                    btnNext.setText(R.string.ui_get_started)
                 } else {
-                    btnNext.text = "NEXT"
+                    btnNext.setText(R.string.ui_next)
                 }
             }
         })
@@ -76,9 +76,9 @@ class IntroActivity : AppCompatActivity() {
 
     private fun setupViewPager() {
         val items = listOf(
-            IntroItem("Capture Moments", "Turn back time with a classic film camera.", R.drawable.intro_bg_1),
-            IntroItem("Authentic Film Look", "Real-time color filters featuring realistic film grain and natural light leaks.", R.drawable.intro_bg_2),
-            IntroItem("Share Your Story", "Save high-quality photos and instantly share your story.", R.drawable.intro_bg_3)
+            IntroItem(getString(R.string.ui_capture_moments), getString(R.string.ui_capture_moments_desc), R.drawable.intro_bg_1),
+            IntroItem(getString(R.string.ui_film_look), getString(R.string.ui_film_look_desc), R.drawable.intro_bg_2),
+            IntroItem(getString(R.string.ui_share_story), getString(R.string.ui_share_story_desc), R.drawable.intro_bg_3)
         )
         introAdapter = IntroAdapter(items)
         viewPager.adapter = introAdapter

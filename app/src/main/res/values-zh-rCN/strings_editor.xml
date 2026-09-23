@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ui_edit">编辑</string><string name="ui_save">保存</string><string name="ui_saved">已保存</string><string name="ui_edit_again">继续编辑</string><string name="ui_new_photo">新照片</string><string name="ui_more">更多</string><string name="ui_date">日期</string><string name="ui_date_off">关闭</string>
+</resources>

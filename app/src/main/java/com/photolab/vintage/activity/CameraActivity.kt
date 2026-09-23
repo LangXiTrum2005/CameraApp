@@ -13,12 +13,18 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.photolab.vintage.R
 import com.photolab.vintage.util.AdManager
 import com.photolab.vintage.util.ImageUtil
 import com.photolab.vintage.util.ResourceUtil
+import com.photolab.vintage.util.SharePreferenceUtil
+import com.photolab.vintage.util.adapter.CameraModeAdapter
 import com.photolab.vintage.util.adapter.FilterAdapter
 import com.photolab.vintage.util.bean.FilterConfig
 import com.photolab.vintage.util.picker.PhotoPicker
@@ -36,15 +42,24 @@ class CameraActivity : AppCompatActivity(), FilterAdapter.FilterListener, View.O
     private lateinit var cameraLayout: View
     private lateinit var focusView: ImageView
     private lateinit var rvFilter: RecyclerView
+    private lateinit var rvMode: RecyclerView
     private lateinit var takePhoto: ImageView
     private lateinit var flashIcon: ImageView
+    private lateinit var gridIcon: ImageView
+    private lateinit var clockIcon: ImageView
     private lateinit var countDownTv: TextView
     private lateinit var filterHeader: View
     private lateinit var tvCategoryTitle: TextView
     private lateinit var tvCategoryCount: TextView
     private lateinit var intensiveSlider: VerticalSlider
-    private lateinit var ratioValue: TextView
 
+    private lateinit var tvZoom1x: TextView
+    private lateinit var tvZoom3x: TextView
+    private lateinit var tvZoom10x: TextView
+    private var currentZoomFactor = 1f
+    private lateinit var moreOptionsMenu: View
+
+    // Retained only for legacy click branches. Fixed tab views are no longer inflated.
     private lateinit var noneContainer: View
     private lateinit var filterContainer: View
     private lateinit var dustContainer: View
@@ -60,23 +75,30 @@ class CameraActivity : AppCompatActivity(), FilterAdapter.FilterListener, View.O
 
     private var currentFilterConfig: FilterConfig? = null
     private val configs = LinkedHashMap<Int, String>()
+    private lateinit var modeAdapter: CameraModeAdapter
+    private lateinit var modeLayoutManager: LinearLayoutManager
+    private val modeSnapHelper = PagerSnapHelper()
     private var currentExpandedTabId: Int? = null
 
     private var isFlashOn = false
-    private var isGridVisible = true
+    private var isGridVisible = false
     private var timerSeconds = 0
+    private var timerToast: Toast? = null
 
-    data class CameraRatio(val label: String, val width: Int, val height: Int)
-    private val ratioList = listOf(
-        CameraRatio("3:4", 1080, 1440),
-        CameraRatio("4:5", 1080, 1350),
-        CameraRatio("1:1", 1080, 1080)
-    )
-    private var currentRatioIndex = 0
+    private enum class CameraMode(val labelRes: Int, val categoryTitleRes: Int) {
+        NONE(R.string.ui_mode_none, R.string.ui_mode_original),
+        FILTER(R.string.ui_mode_filter, R.string.ui_mode_filter),
+        DUST(R.string.ui_mode_dust, R.string.ui_mode_dust),
+        LIGHT(R.string.ui_mode_light, R.string.ui_mode_light),
+        MASK(R.string.ui_mode_mask, R.string.ui_mode_mask),
+        GRADIENT(R.string.ui_mode_gradient, R.string.ui_mode_gradient)
+    }
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.decorView.systemUiVisibility = 1280
+        hideSystemUI()
         setContentView(R.layout.camera_layout)
 
         AdManager.getInstance().loadInterstitialAd(this)
@@ -103,29 +125,33 @@ class CameraActivity : AppCompatActivity(), FilterAdapter.FilterListener, View.O
         focusView = findViewById(R.id.focus)
         focusView.visibility = View.GONE
         rvFilter = findViewById(R.id.rvFilter)
+        rvMode = findViewById(R.id.rvMode)
         filterHeader = findViewById(R.id.filterHeader)
         takePhoto = findViewById(R.id.takePhoto)
         flashIcon = findViewById(R.id.flashIcon)
+        gridIcon = findViewById(R.id.gridIcon)
+        clockIcon = findViewById(R.id.clock)
         countDownTv = findViewById(R.id.countDown)
         countDownTv.visibility = View.GONE
         intensiveSlider = findViewById(R.id.intensive)
         intensiveSlider.visibility = View.GONE
-        ratioValue = findViewById(R.id.ratioValue)
 
         tvCategoryTitle = findViewById(R.id.tvCategoryTitle)
         tvCategoryCount = findViewById(R.id.tvCategoryCount)
 
-        noneContainer = findViewById(R.id.none_container)
-        filterContainer = findViewById(R.id.filter_container)
-        dustContainer = findViewById(R.id.dust_container)
-        lightContainer = findViewById(R.id.light_container)
-        maskContainer = findViewById(R.id.mask_container)
-        gradientContainer = findViewById(R.id.gradient_container)
+        tvZoom1x = findViewById(R.id.tvZoom1x)
+        tvZoom3x = findViewById(R.id.tvZoom3x)
+        tvZoom10x = findViewById(R.id.tvZoom10x)
+
+        tvZoom1x.setOnClickListener(this)
+        tvZoom3x.setOnClickListener(this)
+        tvZoom10x.setOnClickListener(this)
 
         rvFilter.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
         setupCameraView()
         setupAdapters()
+        setupModeRail()
 
         intensiveSlider.setOnProgressChangeListener(object : VerticalSlider.OnProgressChangeListener {
             override fun onProgress(progress: Float) {}
@@ -137,19 +163,17 @@ class CameraActivity : AppCompatActivity(), FilterAdapter.FilterListener, View.O
             }
         })
 
+        moreOptionsMenu = findViewById(R.id.moreOptionsMenu)
+
         takePhoto.setOnClickListener(this)
+        findViewById<View>(R.id.btnMore)?.setOnClickListener(this)
         findViewById<View>(R.id.swap)?.setOnClickListener(this)
         findViewById<View>(R.id.flash)?.setOnClickListener(this)
         findViewById<View>(R.id.grid)?.setOnClickListener(this)
         findViewById<View>(R.id.timer)?.setOnClickListener(this)
-        findViewById<View>(R.id.ratio)?.setOnClickListener(this)
 
-        findViewById<View>(R.id.none)?.setOnClickListener(this)
-        findViewById<View>(R.id.filter)?.setOnClickListener(this)
-        findViewById<View>(R.id.dust)?.setOnClickListener(this)
-        findViewById<View>(R.id.light)?.setOnClickListener(this)
-        findViewById<View>(R.id.mask)?.setOnClickListener(this)
-        findViewById<View>(R.id.gradient)?.setOnClickListener(this)
+        isGridVisible = SharePreferenceUtil.isGridEnabled(this)
+        updateGridVisibility()
 
         findViewById<View>(R.id.gallery)?.setOnClickListener {
             PhotoPicker.builder().start(this)
@@ -174,7 +198,7 @@ class CameraActivity : AppCompatActivity(), FilterAdapter.FilterListener, View.O
             params.height = ViewGroup.LayoutParams.MATCH_PARENT
             cameraLayout.layoutParams = params
         }
-        mCameraView.presetCameraForward(false)
+        mCameraView.presetCameraForward(true)
         mCameraView.setFitFullView(true)
         mCameraView.setZOrderOnTop(false)
         mCameraView.setZOrderMediaOverlay(true)
@@ -182,6 +206,9 @@ class CameraActivity : AppCompatActivity(), FilterAdapter.FilterListener, View.O
         mCameraView.setOnTouchListener { v, event ->
             when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
+                    if (moreOptionsMenu.visibility == View.VISIBLE) {
+                        moreOptionsMenu.visibility = View.GONE
+                    }
                     focusView.visibility = View.VISIBLE
                     val focusWidth = if (focusView.width > 0) focusView.width else 100
                     val focusHeight = if (focusView.height > 0) focusView.height else 100
@@ -201,14 +228,6 @@ class CameraActivity : AppCompatActivity(), FilterAdapter.FilterListener, View.O
                 else -> false
             }
         }
-        updateCameraRatio(0)
-    }
-
-    private fun updateCameraRatio(index: Int) {
-        currentRatioIndex = index % ratioList.size
-        val ratio = ratioList[currentRatioIndex]
-        ratioValue.text = ratio.label
-        mCameraView.setPictureSize(ratio.width, ratio.height, true)
     }
 
     private fun setupAdapters() {
@@ -227,25 +246,102 @@ class CameraActivity : AppCompatActivity(), FilterAdapter.FilterListener, View.O
         rvFilter.adapter = filterAdapter
         rvFilter.visibility = View.GONE
         filterHeader.visibility = View.GONE
-        selectCategoryTab(null)
-        currentExpandedTabId = null
     }
 
-    private fun updateCategoryHeader(title: String, count: Int) {
-        tvCategoryTitle.text = title
-        tvCategoryCount.text = "$count hiệu ứng"
+    private fun setupModeRail() {
+        modeLayoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        modeAdapter = CameraModeAdapter(CameraMode.entries.map { getString(it.labelRes) }) { position ->
+            centerMode(position, true)
+        }
+        rvMode.layoutManager = modeLayoutManager
+        rvMode.adapter = modeAdapter
+        modeSnapHelper.attachToRecyclerView(rvMode)
+        rvMode.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                if (newState != RecyclerView.SCROLL_STATE_IDLE) return
+                val snappedView = modeSnapHelper.findSnapView(modeLayoutManager) ?: return
+                val distance = modeSnapHelper.calculateDistanceToFinalSnap(modeLayoutManager, snappedView)
+                if (distance != null && distance[0] != 0) {
+                    recyclerView.smoothScrollBy(distance[0], 0)
+                } else {
+                    showMode(modeLayoutManager.getPosition(snappedView))
+                }
+            }
+        })
+        rvMode.post {
+            val itemWidth = (94 * resources.displayMetrics.density).toInt()
+            val sidePadding = ((rvMode.width - itemWidth) / 2).coerceAtLeast(0)
+            rvMode.setPadding(sidePadding, rvMode.paddingTop, sidePadding, rvMode.paddingBottom)
+            centerMode(CameraMode.NONE.ordinal, false)
+        }
     }
 
-    private fun selectCategoryTab(selectedContainer: View?) {
-        noneContainer.background = null
-        filterContainer.background = null
-        dustContainer.background = null
-        lightContainer.background = null
-        maskContainer.background = null
-        gradientContainer.background = null
-
-        selectedContainer?.setBackgroundResource(R.drawable.bg_tab_selected)
+    private fun centerMode(position: Int, smooth: Boolean) {
+        if (position !in CameraMode.entries.indices) return
+        val modeView = modeLayoutManager.findViewByPosition(position)
+        if (modeView == null) {
+            modeLayoutManager.scrollToPositionWithOffset(position, rvMode.paddingLeft)
+            rvMode.post { centerMode(position, smooth) }
+            return
+        }
+        val distance = modeSnapHelper.calculateDistanceToFinalSnap(modeLayoutManager, modeView)
+        if (distance == null || distance[0] == 0) {
+            showMode(position)
+        } else if (smooth) {
+            rvMode.smoothScrollBy(distance[0], 0)
+        } else {
+            rvMode.scrollBy(distance[0], 0)
+            showMode(position)
+        }
     }
+
+    private fun showMode(position: Int) {
+        if (position !in CameraMode.entries.indices) return
+        modeAdapter.select(position)
+
+        when (CameraMode.entries[position]) {
+            CameraMode.NONE -> {
+                rvFilter.visibility = View.GONE
+                filterHeader.visibility = View.GONE
+                currentFilterConfig = null
+                initConfigs()
+                filterAdapter.selectedFilterIndex = 0
+                dustAdapter.selectedFilterIndex = 0
+                lightAdapter.selectedFilterIndex = 0
+                maskAdapter.selectedFilterIndex = 0
+                gradientAdapter.selectedFilterIndex = 0
+                updateCategoryHeader(CameraMode.NONE.categoryTitleRes, 0)
+                intensiveSlider.visibility = View.GONE
+                applyFilterToCameraView()
+            }
+            else -> {
+                val mode = CameraMode.entries[position]
+                val adapter = adapterForMode(mode)
+                rvFilter.visibility = View.VISIBLE
+                filterHeader.visibility = View.VISIBLE
+                rvFilter.adapter = adapter
+                updateCategoryHeader(mode.categoryTitleRes, adapter.itemCount)
+                currentFilterConfig = adapter.filterEffects.getOrNull(adapter.selectedFilterIndex)
+                updateIntensiveSliderVisibility()
+            }
+        }
+    }
+
+    private fun adapterForMode(mode: CameraMode): FilterAdapter = when (mode) {
+        CameraMode.FILTER -> filterAdapter
+        CameraMode.DUST -> dustAdapter
+        CameraMode.LIGHT -> lightAdapter
+        CameraMode.MASK -> maskAdapter
+        CameraMode.GRADIENT -> gradientAdapter
+        CameraMode.NONE -> filterAdapter
+    }
+
+    private fun updateCategoryHeader(titleRes: Int, count: Int) {
+        tvCategoryTitle.setText(titleRes)
+        tvCategoryCount.text = getString(R.string.ui_effect_count, count)
+    }
+
+    private fun selectCategoryTab(selectedContainer: View?) = Unit
 
     override fun onFilterSelected(filterConfig: FilterConfig) {
         currentFilterConfig = filterConfig
@@ -255,7 +351,7 @@ class CameraActivity : AppCompatActivity(), FilterAdapter.FilterListener, View.O
         } else {
             configs[filterConfig.type] = MessageFormat.format(filterConfig.config, filterConfig.intensive)
             intensiveSlider.setProgress(filterConfig.intensive / 100.0f)
-            intensiveSlider.visibility = View.VISIBLE
+            intensiveSlider.visibility = View.GONE
         }
         applyFilterToCameraView()
     }
@@ -277,12 +373,26 @@ class CameraActivity : AppCompatActivity(), FilterAdapter.FilterListener, View.O
         if (config == null || config.config.isEmpty() || config.type == 0) {
             intensiveSlider.visibility = View.GONE
         } else {
-            intensiveSlider.visibility = View.VISIBLE
+            intensiveSlider.visibility = View.GONE
             intensiveSlider.setProgress(config.intensive / 100.0f)
         }
     }
 
     override fun onClick(v: View?) {
+        val modePosition = when (v?.id) {
+            R.id.none -> CameraMode.NONE.ordinal
+            R.id.filter -> CameraMode.FILTER.ordinal
+            R.id.dust -> CameraMode.DUST.ordinal
+            R.id.light -> CameraMode.LIGHT.ordinal
+            R.id.mask -> CameraMode.MASK.ordinal
+            R.id.gradient -> CameraMode.GRADIENT.ordinal
+            else -> null
+        }
+        if (modePosition != null) {
+            centerMode(modePosition, true)
+            return
+        }
+
         when (v?.id) {
             R.id.takePhoto -> {
                 if (timerSeconds > 0) {
@@ -293,34 +403,49 @@ class CameraActivity : AppCompatActivity(), FilterAdapter.FilterListener, View.O
             }
             R.id.swap -> {
                 mCameraView.switchCamera()
+                mCameraView.postDelayed({
+                    setCameraZoom(currentZoomFactor)
+                    if (isFlashOn && mCameraView.isCameraBackForward) {
+                        mCameraView.setFlashLightMode("torch")
+                    }
+                }, 300)
             }
+            R.id.tvZoom1x -> setCameraZoom(1f)
+            R.id.tvZoom3x -> setCameraZoom(3f)
+            R.id.tvZoom10x -> setCameraZoom(10f)
             R.id.flash -> {
                 isFlashOn = !isFlashOn
                 flashIcon.setImageResource(if (isFlashOn) R.drawable.ic_flash_on else R.drawable.ic_flash_off)
-                mCameraView.setFlashLightMode(if (isFlashOn) "on" else "off")
+                mCameraView.setFlashLightMode(if (isFlashOn) "torch" else "off")
             }
             R.id.grid -> {
                 isGridVisible = !isGridVisible
-                val visibility = if (isGridVisible) View.VISIBLE else View.GONE
-                findViewById<View>(R.id.line1)?.visibility = visibility
-                findViewById<View>(R.id.line2)?.visibility = visibility
-                findViewById<View>(R.id.line3)?.visibility = visibility
-                findViewById<View>(R.id.line4)?.visibility = visibility
+                SharePreferenceUtil.setGridEnabled(this, isGridVisible)
+                updateGridVisibility()
             }
             R.id.timer -> {
                 timerSeconds = when (timerSeconds) {
                     0 -> 3
                     3 -> 5
+                    5 -> 9
                     else -> 0
                 }
-                if (timerSeconds > 0) {
-                    Toast.makeText(this, "Timer: ${timerSeconds}s", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(this, "Timer Off", Toast.LENGTH_SHORT).show()
+                val iconRes = when (timerSeconds) {
+                    3 -> R.drawable.ic_circle_three
+                    5 -> R.drawable.ic_circle_five
+                    9 -> R.drawable.ic_circle_nine
+                    else -> R.drawable.ic_clock
                 }
+                clockIcon.setImageResource(iconRes)
+
+                timerToast?.cancel()
+                val message = if (timerSeconds > 0) "Timer: ${timerSeconds}s" else "Timer Off"
+                timerToast = Toast.makeText(this, message, Toast.LENGTH_SHORT)
+                timerToast?.show()
             }
-            R.id.ratio -> {
-                updateCameraRatio(currentRatioIndex + 1)
+            R.id.btnMore -> {
+                val isVisible = moreOptionsMenu.visibility == View.VISIBLE
+                moreOptionsMenu.visibility = if (isVisible) View.GONE else View.VISIBLE
             }
             R.id.none -> {
                 currentExpandedTabId = null
@@ -334,7 +459,7 @@ class CameraActivity : AppCompatActivity(), FilterAdapter.FilterListener, View.O
                 maskAdapter.selectedFilterIndex = 0
                 gradientAdapter.selectedFilterIndex = 0
                 selectCategoryTab(noneContainer)
-                updateCategoryHeader("NGUYÊN BẢN", 0)
+                updateCategoryHeader(R.string.ui_mode_original, 0)
                 intensiveSlider.visibility = View.GONE
                 applyFilterToCameraView()
             }
@@ -351,7 +476,7 @@ class CameraActivity : AppCompatActivity(), FilterAdapter.FilterListener, View.O
                     filterHeader.visibility = View.VISIBLE
                     rvFilter.adapter = filterAdapter
                     selectCategoryTab(filterContainer)
-                    updateCategoryHeader("BỘ LỌC", filterAdapter.itemCount)
+                    updateCategoryHeader(R.string.ui_mode_filter, filterAdapter.itemCount)
                     currentFilterConfig = filterAdapter.filterEffects.getOrNull(filterAdapter.selectedFilterIndex)
                     updateIntensiveSliderVisibility()
                 }
@@ -369,7 +494,7 @@ class CameraActivity : AppCompatActivity(), FilterAdapter.FilterListener, View.O
                     filterHeader.visibility = View.VISIBLE
                     rvFilter.adapter = dustAdapter
                     selectCategoryTab(dustContainer)
-                    updateCategoryHeader("BỤI PHIM", dustAdapter.itemCount)
+                    updateCategoryHeader(R.string.ui_mode_dust, dustAdapter.itemCount)
                     currentFilterConfig = dustAdapter.filterEffects.getOrNull(dustAdapter.selectedFilterIndex)
                     updateIntensiveSliderVisibility()
                 }
@@ -387,7 +512,7 @@ class CameraActivity : AppCompatActivity(), FilterAdapter.FilterListener, View.O
                     filterHeader.visibility = View.VISIBLE
                     rvFilter.adapter = lightAdapter
                     selectCategoryTab(lightContainer)
-                    updateCategoryHeader("ÁNH SÁNG", lightAdapter.itemCount)
+                    updateCategoryHeader(R.string.ui_mode_light, lightAdapter.itemCount)
                     currentFilterConfig = lightAdapter.filterEffects.getOrNull(lightAdapter.selectedFilterIndex)
                     updateIntensiveSliderVisibility()
                 }
@@ -405,7 +530,7 @@ class CameraActivity : AppCompatActivity(), FilterAdapter.FilterListener, View.O
                     filterHeader.visibility = View.VISIBLE
                     rvFilter.adapter = maskAdapter
                     selectCategoryTab(maskContainer)
-                    updateCategoryHeader("MẶT NẠ", maskAdapter.itemCount)
+                    updateCategoryHeader(R.string.ui_mode_mask, maskAdapter.itemCount)
                     currentFilterConfig = maskAdapter.filterEffects.getOrNull(maskAdapter.selectedFilterIndex)
                     updateIntensiveSliderVisibility()
                 }
@@ -423,7 +548,7 @@ class CameraActivity : AppCompatActivity(), FilterAdapter.FilterListener, View.O
                     filterHeader.visibility = View.VISIBLE
                     rvFilter.adapter = gradientAdapter
                     selectCategoryTab(gradientContainer)
-                    updateCategoryHeader("CHUYỂN MÀU", gradientAdapter.itemCount)
+                    updateCategoryHeader(R.string.ui_mode_gradient, gradientAdapter.itemCount)
                     currentFilterConfig = gradientAdapter.filterEffects.getOrNull(gradientAdapter.selectedFilterIndex)
                     updateIntensiveSliderVisibility()
                 }
@@ -451,6 +576,7 @@ class CameraActivity : AppCompatActivity(), FilterAdapter.FilterListener, View.O
     private fun capturePhoto() {
         takePhoto.isEnabled = false
         try {
+            val isMirror = SharePreferenceUtil.isMirrorFrontCameraEnabled(this)
             mCameraView.takePicture(object : CameraGLSurfaceView.TakePictureCallback {
                 override fun takePictureOK(bitmap: Bitmap?) {
                     takePhoto.post { takePhoto.isEnabled = true }
@@ -482,7 +608,7 @@ class CameraActivity : AppCompatActivity(), FilterAdapter.FilterListener, View.O
                         Toast.makeText(this@CameraActivity, "Photo capture failed", Toast.LENGTH_SHORT).show()
                     }
                 }
-            }, null, "", 1.0f, true)
+            }, null, "", 1.0f, isMirror)
         } catch (e: Exception) {
             takePhoto.isEnabled = true
             Log.e(TAG, "takePicture failed", e)
@@ -490,10 +616,45 @@ class CameraActivity : AppCompatActivity(), FilterAdapter.FilterListener, View.O
         }
     }
 
+    private fun hideSystemUI() {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        val controller = WindowInsetsControllerCompat(window, window.decorView)
+        controller.hide(WindowInsetsCompat.Type.navigationBars())
+        controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+
+        @Suppress("DEPRECATION")
+        window.decorView.systemUiVisibility = (
+            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+            or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+            or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+            or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        )
+    }
+
     override fun onResume() {
         super.onResume()
+        hideSystemUI()
         mCameraView.onResume()
         applyFilterToCameraView()
+        isGridVisible = SharePreferenceUtil.isGridEnabled(this)
+        updateGridVisibility()
+    }
+
+    private fun updateGridVisibility() {
+        val visibility = if (isGridVisible) View.VISIBLE else View.GONE
+        gridIcon.setImageResource(if (isGridVisible) R.drawable.ic_grid else R.drawable.ic_grid_off)
+        findViewById<View>(R.id.line1)?.visibility = visibility
+        findViewById<View>(R.id.line2)?.visibility = visibility
+        findViewById<View>(R.id.line3)?.visibility = visibility
+        findViewById<View>(R.id.line4)?.visibility = visibility
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            hideSystemUI()
+        }
     }
 
     override fun onPause() {
@@ -501,6 +662,46 @@ class CameraActivity : AppCompatActivity(), FilterAdapter.FilterListener, View.O
         CameraInstance.getInstance().stopCamera()
         mCameraView.release(null)
         mCameraView.onPause()
+    }
+
+    private fun setCameraZoom(zoomFactor: Float) {
+        currentZoomFactor = zoomFactor
+        updateZoomUi(zoomFactor)
+
+        try {
+            val cameraInstance = CameraInstance.getInstance()
+            val params = cameraInstance.params ?: return
+            if (params.isZoomSupported) {
+                val maxZoom = params.maxZoom
+                val zoomRatios = params.zoomRatios ?: return
+                val targetRatio = (zoomFactor * 100).toInt()
+
+                var closestIndex = 0
+                var minDiff = Int.MAX_VALUE
+                for (i in 0..maxZoom) {
+                    if (i < zoomRatios.size) {
+                        val diff = Math.abs(zoomRatios[i] - targetRatio)
+                        if (diff < minDiff) {
+                            minDiff = diff
+                            closestIndex = i
+                        }
+                    }
+                }
+                params.zoom = closestIndex
+                cameraInstance.setParams(params)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun updateZoomUi(zoomFactor: Float) {
+        val activeColor = androidx.core.content.ContextCompat.getColor(this, R.color.camera_accent)
+        val mutedColor = androidx.core.content.ContextCompat.getColor(this, R.color.camera_text_muted)
+
+        tvZoom1x.setTextColor(if (zoomFactor == 1f) activeColor else mutedColor)
+        tvZoom3x.setTextColor(if (zoomFactor == 3f) activeColor else mutedColor)
+        tvZoom10x.setTextColor(if (zoomFactor == 10f) activeColor else mutedColor)
     }
 
     companion object {

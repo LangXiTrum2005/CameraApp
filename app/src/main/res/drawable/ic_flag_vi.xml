@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <clip-path android:pathData="M24,0A24,24 0,1 0,24,48A24,24 0,1 0,24,0Z"/>
+    <!-- Red circle -->
+    <path
+        android:pathData="M24,0 A24,24 0 1,0 24,48 A24,24 0 1,0 24,0 Z"
+        android:fillColor="#DA251D"/>
+    <!-- Yellow star in center -->
+    <path
+        android:pathData="M24,12 L27.7,20 L36.4,20.6 L29.8,26.2 L31.8,34.8 L24,30.2 L16.2,34.8 L18.2,26.2 L11.6,20.6 L20.3,20 Z"
+        android:fillColor="#FFFF00"/>
+</vector>

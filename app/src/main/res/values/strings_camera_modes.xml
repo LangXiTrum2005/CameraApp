@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ui_mode_none">REMOVE</string>
+    <string name="ui_mode_original">ORIGINAL</string>
+    <string name="ui_mode_filter">FILTER</string>
+    <string name="ui_mode_dust">FILM DUST</string>
+    <string name="ui_mode_light">LIGHT</string>
+    <string name="ui_mode_mask">MASK</string>
+    <string name="ui_mode_gradient">GRADIENT</string>
+</resources>

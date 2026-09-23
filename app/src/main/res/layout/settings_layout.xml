@@ -61,7 +61,7 @@
                             android:textColor="@color/on_surface"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Ngôn ngữ"/>
+                            android:text="@string/ui_language"/>
                         <TextView
                             android:id="@+id/tv_language_subtitle"
                             android:textSize="12sp"
@@ -69,7 +69,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="Tiếng Việt"/>
+                            android:text="@string/ui_language"/>
                     </LinearLayout>
                     <ImageView
                         android:layout_width="24dp"
@@ -85,7 +85,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="Chụp ảnh"/>
+                android:text="@string/ui_camera_section"/>
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
@@ -105,7 +105,8 @@
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:visibility="gone">
                         <LinearLayout
                             android:orientation="vertical"
                             android:layout_width="0dp"
@@ -117,14 +118,14 @@
                                 android:textColor="@color/on_surface"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Giữ ảnh gốc"/>
+                                android:text="@string/ui_keep_original"/>
                             <TextView
                                 android:textSize="12sp"
                                 android:textColor="@color/on_surface_light"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
-                                android:text="Lưu thêm ảnh gốc bên cạnh ảnh đã chỉnh"/>
+                                android:text="@string/ui_keep_original_subtitle"/>
                         </LinearLayout>
                         <com.google.android.material.switchmaterial.SwitchMaterial
                             android:id="@+id/switch_save_original"
@@ -137,7 +138,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_marginTop="12dp"
-                        android:layout_marginBottom="12dp"/>
+                        android:layout_marginBottom="12dp"
+                        android:visibility="gone"/>
 
                     <LinearLayout
                         android:gravity="center_vertical"
@@ -155,14 +157,14 @@
                                 android:textColor="@color/on_surface"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Bật lưới mặc định"/>
+                                android:text="@string/ui_default_grid"/>
                             <TextView
                                 android:textSize="12sp"
                                 android:textColor="@color/on_surface_light"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
-                                android:text="Hiện lưới một phần ba khi mở máy ảnh"/>
+                                android:text="@string/ui_default_grid_subtitle"/>
                         </LinearLayout>
                         <com.google.android.material.switchmaterial.SwitchMaterial
                             android:id="@+id/switch_grid"
@@ -193,14 +195,14 @@
                                 android:textColor="@color/on_surface"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Lật gương camera trước"/>
+                                android:text="@string/ui_mirror_front_camera"/>
                             <TextView
                                 android:textSize="12sp"
                                 android:textColor="@color/on_surface_light"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
-                                android:text="Ảnh selfie giống như khung xem trước"/>
+                                android:text="@string/ui_mirror_front_camera_subtitle"/>
                         </LinearLayout>
                         <com.google.android.material.switchmaterial.SwitchMaterial
                             android:id="@+id/switch_mirror_front_camera"
@@ -388,7 +390,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="Version 1.0"/>
+                            android:text="@string/settings_version"/>
                     </LinearLayout>
                     <ImageView
                         android:layout_width="24dp"

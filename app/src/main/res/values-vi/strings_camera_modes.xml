@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ui_mode_none">XÓA</string>
+    <string name="ui_mode_original">NGUYÊN BẢN</string>
+    <string name="ui_mode_filter">BỘ LỌC</string>
+    <string name="ui_mode_dust">BỤI PHIM</string>
+    <string name="ui_mode_light">ÁNH SÁNG</string>
+    <string name="ui_mode_mask">MẶT NẠ</string>
+    <string name="ui_mode_gradient">CHUYỂN MÀU</string>
+</resources>

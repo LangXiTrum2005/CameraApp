@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:ads="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="@color/surface_dim"
-    android:fitsSystemWindows="true"
+    android:background="@drawable/bg_editor_liquid"
+    android:fitsSystemWindows="false"
+    android:paddingTop="24dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:orientation="vertical"
         android:id="@+id/activitylayout"
-        android:background="@color/surface_dim"
+        android:background="@drawable/bg_editor_liquid"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
@@ -19,7 +20,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            ads:cardBackgroundColor="@color/surface_container"
+            ads:cardBackgroundColor="#BFFFFFFF"
             ads:cardCornerRadius="16dp"
             ads:cardElevation="2dp"
             ads:layout_constraintBottom_toTopOf="@+id/layoutEditor"
@@ -28,11 +29,11 @@
             ads:layout_constraintTop_toTopOf="parent">
             <FrameLayout
                 android:id="@+id/wrapPicture"
-                android:background="@color/surface_container"
+                android:background="@drawable/bg_photo_glass"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
                 <View
-                    android:background="@color/surface_container"
+                    android:background="@android:color/transparent"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
                 <org.wysaid.view.ImageGLSurfaceView
@@ -70,7 +71,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:minHeight="200dp"
-            ads:cardBackgroundColor="@color/surface"
+            ads:cardBackgroundColor="#D9FFFFFF"
             ads:cardCornerRadius="24dp"
             ads:cardElevation="8dp"
             ads:layout_constraintBottom_toBottomOf="parent"
@@ -97,11 +98,13 @@
                         android:insetBottom="0dp"
                         android:layout_alignParentStart="true"
                         android:layout_centerVertical="true"
-                        ads:backgroundTint="@color/surface_container"
+                        ads:backgroundTint="#BFFFFFFF"
                         ads:cornerRadius="20dp"
+                        ads:strokeColor="#80FFFFFF"
+                        ads:strokeWidth="1dp"
                         ads:icon="@drawable/ic_back"
                         ads:iconSize="20dp"
-                        ads:iconTint="@color/on_surface"
+                        ads:iconTint="#25314D"
                         style="@style/Widget.Material3.Button.IconButton"/>
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -116,7 +119,9 @@
                             android:id="@+id/textTitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Chỉnh sửa"
+                            android:gravity="center"
+                            android:includeFontPadding="false"
+                            android:text="@string/ui_edit"
                             android:fontFamily="sans-serif-medium"/>
                         <TextView
                             android:textSize="11sp"
@@ -124,6 +129,8 @@
                             android:id="@+id/textSubTitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:includeFontPadding="false"
                             android:text="09.18.26 / 09:38"/>
                     </LinearLayout>
                     <com.google.android.material.button.MaterialButton
@@ -132,14 +139,19 @@
                         android:textColor="@color/white"
                         android:id="@+id/save"
                         android:layout_width="wrap_content"
-                        android:layout_height="36dp"
-                        android:text="Lưu"
+                        android:layout_height="40dp"
+                        android:text="@string/ui_save"
+                        android:gravity="center"
+                        android:textAlignment="center"
+                        android:includeFontPadding="false"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
-                        ads:backgroundTint="#ff4d4d"
+                        ads:backgroundTint="#FF4F6D"
                         ads:cornerRadius="18dp"
-                        ads:paddingEnd="20dp"
-                        ads:paddingStart="20dp"
+                        ads:strokeColor="#80FFFFFF"
+                        ads:strokeWidth="1dp"
+                        android:paddingEnd="0dp"
+                        android:paddingStart="0dp"
                         style="@style/Widget.Material3.Button"/>
                 </RelativeLayout>
                 <include
@@ -159,7 +171,7 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:orientation="horizontal"
                     android:id="@+id/rvConstraintTools"
-                    android:background="@color/surface_container"
+                    android:background="#38FFFFFF"
                     android:paddingTop="8dp"
                     android:paddingBottom="8dp"
                     android:clipToPadding="false"
@@ -171,7 +183,7 @@
                 <LinearLayout
                     android:orientation="vertical"
                     android:id="@+id/adjust"
-                    android:background="@color/surface_container"
+                    android:background="#38FFFFFF"
                     android:paddingTop="16dp"
                     android:paddingBottom="16dp"
                     android:layout_width="match_parent"

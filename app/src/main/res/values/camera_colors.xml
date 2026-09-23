@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="camera_surface">#000000</color>
+    <color name="camera_surface_elevated">#A614151A</color>
+    <color name="camera_control">#99191A1F</color>
+    <color name="camera_control_outline">#99FFFFFF</color>
+    <color name="camera_text">#FFFFFF</color>
+    <color name="camera_text_muted">#A1A1A6</color>
+    <color name="camera_icon">#FFFFFF</color>
+    <color name="camera_grid">#80FFFFFF</color>
+    <color name="camera_accent">#FFD60A</color>
+    <color name="camera_premium">#FFD166</color>
+</resources>

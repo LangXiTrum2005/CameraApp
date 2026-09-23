@@ -41,33 +41,33 @@ class EditingToolsAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val tool = tools[position]
         
-        holder.name.text = when (tool) {
-            ToolType.NONE -> "Xóa"
-            ToolType.FILTER -> "Bộ lọc"
-            ToolType.DUST -> "Bụi phim"
-            ToolType.LIGHT -> "Ánh sáng"
-            ToolType.MASK -> "Mặt nạ"
-            ToolType.GRADIENT -> "Chuyển màu"
-            ToolType.DATE -> "Ngày tháng"
-        }
+        holder.name.setText(when (tool) {
+            ToolType.NONE -> R.string.ui_mode_none
+            ToolType.FILTER -> R.string.ui_mode_filter
+            ToolType.DUST -> R.string.ui_mode_dust
+            ToolType.LIGHT -> R.string.ui_mode_light
+            ToolType.MASK -> R.string.ui_mode_mask
+            ToolType.GRADIENT -> R.string.ui_mode_gradient
+            ToolType.DATE -> R.string.ui_date
+        })
 
         val iconRes = when (tool) {
-            ToolType.NONE -> R.drawable.ic_none
-            ToolType.FILTER -> R.drawable.ic_filter
-            ToolType.DUST -> R.drawable.ic_dust
-            ToolType.LIGHT -> R.drawable.ic_light
-            ToolType.MASK -> R.drawable.ic_mask
-            ToolType.GRADIENT -> R.drawable.ic_gradient
-            ToolType.DATE -> R.drawable.ic_calendar
+            ToolType.NONE -> R.drawable.ic_tool_erase
+            ToolType.FILTER -> R.drawable.ic_tool_filter
+            ToolType.DUST -> R.drawable.ic_tool_dust
+            ToolType.LIGHT -> R.drawable.ic_tool_light
+            ToolType.MASK -> R.drawable.ic_tool_mask
+            ToolType.GRADIENT -> R.drawable.ic_tool_gradient
+            ToolType.DATE -> R.drawable.ic_tool_date
         }
         holder.icon.setImageResource(iconRes)
 
         if (position == selectedPosition) {
             holder.wrapTool.setBackgroundResource(R.drawable.bg_tab_selected)
-            holder.name.setTextColor(holder.itemView.context.getColor(R.color.dark_red))
+            holder.name.setTextColor(holder.itemView.context.getColor(R.color.primary))
         } else {
-            holder.wrapTool.background = null
-            holder.name.setTextColor(holder.itemView.context.getColor(R.color.on_surface_light))
+            holder.wrapTool.setBackgroundResource(R.drawable.bg_tool_glass)
+            holder.name.setTextColor(holder.itemView.context.getColor(R.color.on_surface_variant))
         }
 
         holder.itemView.setOnClickListener {

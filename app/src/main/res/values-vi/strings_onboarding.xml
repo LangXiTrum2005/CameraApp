@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ui_permission_eyebrow">VINTAGE CAMERA · THIẾT LẬP</string><string name="ui_permission_title">Quyền truy cập\nđể trải nghiệm đầy đủ</string><string name="ui_permission_desc">Cho phép các quyền cần thiết để chụp khoảnh khắc và nhận cập nhật.</string><string name="ui_permission_camera_title">Quyền máy ảnh</string><string name="ui_permission_camera_desc">Chụp ảnh và quay video.</string><string name="ui_permission_notifications_title">Thông báo</string><string name="ui_permission_notifications_desc">Cập nhật, mẹo và tính năng mới.</string><string name="ui_permission_note">Bạn có thể thay đổi quyền bất kỳ lúc nào trong Cài đặt.</string><string name="ui_grant_access">CẤP QUYỀN</string>
+</resources>

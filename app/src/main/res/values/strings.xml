@@ -258,5 +258,6 @@
     <string name="terms_of_service_url">https://sites.google.com/view/vintagephotolab</string>
     <string name="title_dialog_feed_back">Send a feed back</string>
     <string name="watermark_label_prefix">AdMob - </string>
+    <string name="st_language">Language</string>
     <string name="yes">Yes</string>
 </resources>

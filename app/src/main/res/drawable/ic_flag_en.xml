@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <clip-path android:pathData="M24,0A24,24 0,1 0,24,48A24,24 0,1 0,24,0Z"/>
+    <path
+        android:pathData="M24,0 A24,24 0 1,0 24,48 A24,24 0 1,0 24,0 Z"
+        android:fillColor="#BB133E"/>
+    <path
+        android:pathData="M0,7.38 H48 V11.08 H0 Z M0,14.77 H48 V18.46 H0 Z M0,22.15 H48 V25.85 H0 Z M0,29.54 H48 V33.23 H0 Z M0,36.92 H48 V40.62 H0 Z"
+        android:fillColor="#FFFFFF"/>
+    <path
+        android:pathData="M0,0 H24 V24 H0 Z"
+        android:fillColor="#002147"/>
+    <!-- Stars mockup pattern -->
+    <path
+        android:pathData="M4,4 L5,7 L2,5 L6,5 L3,7 Z M12,4 L13,7 L10,5 L14,5 L11,7 Z M20,4 L21,7 L18,5 L22,5 L19,7 Z M8,10 L9,13 L6,11 L10,11 L7,13 Z M16,10 L17,13 L14,11 L18,11 L15,13 Z M4,16 L5,19 L2,17 L6,17 L3,19 Z M12,16 L13,19 L10,17 L14,17 L11,19 Z M20,16 L21,19 L18,17 L22,17 L19,19 Z"
+        android:fillColor="#FFFFFF"/>
+</vector>
